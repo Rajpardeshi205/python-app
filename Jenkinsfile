@@ -1,7 +1,7 @@
 pipeline {
 
     environment {
-        TARGET_IP = '54.167.105.172'
+        TARGET_IP = '34.236.150.119'
         SSH_USER  = 'ec2-user'
     }
 
