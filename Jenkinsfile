@@ -90,14 +90,14 @@ pipeline {
                     usernameVariable: 'SSH_USER'
                 )]) {
                     sh '''
-                        ssh -i $SSH_KEY \
-                        -o StrictHostKeyChecking=no \
-                        $SSH_USER@$TARGET_IP "
-                            cd /home/$SSH_USER/python-app &&
-                            fuser -k 5000/tcp || true &&
-                            JENKINS_NODE_COOKIE=dontKillMe \
-                            nohup .venv/bin/python app.py </dev/null > app.log 2>&1 &
-                        "
+                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no \
+                        $SSH_USER@$TARGET_IP '
+                            cd /home/$USER/python-app
+                            fuser -k 5000/tcp >/dev/null 2>&1 || true
+                            setsid nohup .venv/bin/python app.py > app.log 2>&1 < /dev/null &
+                            sleep 3
+                            curl -fsS http://localhost:5000/ >/dev/null && echo "App is up"
+                        '
                     '''
                 }
             }
