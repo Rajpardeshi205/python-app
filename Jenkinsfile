@@ -2,6 +2,7 @@ pipeline {
 
     environment {
         TARGET_IP = '34.236.150.119'
+        CRED_ID   = 'ec2-target-key'
         SSH_USER  = 'ec2-user'
     }
 
