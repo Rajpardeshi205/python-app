@@ -83,24 +83,24 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
-                withCredentials([sshUserPrivateKey(
-                    credentialsId: "${CRED_ID}",
-                    keyFileVariable: 'SSH_KEY',
-                    usernameVariable: 'SSH_USER'
-                )]) {
-                    sh '''
-                        ssh -i $SSH_KEY \
-                        -o StrictHostKeyChecking=no \
-                        $SSH_USER@$TARGET_IP "
-                            cd /home/ec2-user/python-app &&
-                            fuser -k 5000/tcp || true &&
-                            JENKINS_NODE_COOKIE=dontKillMe \
-                            nohup .venv/bin/python app.py > app.log 2>&1 &
-                        "
-                    '''
-                }
-            }
+    steps {
+        withCredentials([sshUserPrivateKey(
+            credentialsId: "${CRED_ID}",
+            keyFileVariable: 'SSH_KEY',
+            usernameVariable: 'SSH_USER'
+        )]) {
+            sh '''
+                ssh -i $SSH_KEY \
+                -o StrictHostKeyChecking=no \
+                $SSH_USER@$TARGET_IP "
+                    cd /home/$SSH_USER/python-app &&
+                    fuser -k 5000/tcp || true &&
+                    JENKINS_NODE_COOKIE=dontKillMe \
+                    nohup .venv/bin/python app.py </dev/null > app.log 2>&1 &
+                "
+            '''
         }
+    }
+}
     }
 }
